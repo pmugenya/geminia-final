@@ -1,0 +1,47 @@
+/* Add these styles to your component CSS file or global styles */
+
+/* Material Form Field Red Border Validation */
+::ng-deep .mat-form-field-invalid .mat-form-field-outline-thick {
+  color: #f44336 !important;
+}
+
+::ng-deep .mat-form-field-invalid .mat-form-field-outline-start,
+::ng-deep .mat-form-field-invalid .mat-form-field-outline-end,
+::ng-deep .mat-form-field-invalid .mat-form-field-outline-gap {
+  border-color: #f44336 !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .mat-form-field-invalid .mat-form-field-outline {
+  color: #f44336 !important;
+}
+
+::ng-deep .mat-form-field-invalid .mat-form-field-label {
+  color: #f44336 !important;
+}
+
+/* Ensure the red border appears on focus as well */
+::ng-deep .mat-form-field-invalid.mat-focused .mat-form-field-outline-thick {
+  color: #f44336 !important;
+}
+
+::ng-deep .mat-form-field-invalid.mat-focused .mat-form-field-outline-start,
+::ng-deep .mat-form-field-invalid.mat-focused .mat-form-field-outline-end,
+::ng-deep .mat-form-field-invalid.mat-focused .mat-form-field-outline-gap {
+  border-color: #f44336 !important;
+  border-width: 2px !important;
+}
+
+/* Red border for select dropdowns when invalid */
+::ng-deep .mat-form-field-invalid .mat-select-arrow {
+  color: #f44336 !important;
+}
+
+::ng-deep .mat-form-field-invalid .mat-select-value {
+  color: #f44336 !important;
+}
+
+/* Date picker validation styles */
+::ng-deep .mat-form-field-invalid .mat-datepicker-toggle {
+  color: #f44336 !important;
+}

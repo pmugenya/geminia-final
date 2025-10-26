@@ -1,0 +1,556 @@
+
+
+<div [formGroup]="shipmentForm" class="modal-container">
+  <div class="modal-header">
+    <h1 mat-dialog-title class="modal-title">Shipment & Importer Information</h1>
+    <button mat-icon-button (click)="closeDialog()" class="close-button" aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center h-96">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading" class="modal-content bg-gray-50 py-2 px-3">
+    <div class="max-w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:h-[calc(100vh-180px)]">
+        <!-- Main Form Section - Order 1 on mobile, Order 1 on desktop -->
+        <div class="lg:col-span-7 overflow-y-auto order-1 lg:max-h-full">
+          <div class="bg-white rounded-lg shadow-sm p-3">
+
+          <!-- Document Uploads -->
+          <div class="mb-3 p-4 border-2 border-blue-200 rounded-lg bg-blue-50/30">
+            <h2 class="text-sm font-semibold text-gray-900 mb-3">Document Uploads</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+              <div *ngIf="!quoteData.idfDocumentExists">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  IDF Document <span class="text-red-500">*</span>
+                </label>
+                <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
+                     [ngClass]="duplicateFileErrors['idfDocument'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                     (click)="idfDocument.click()">
+                  <button type="button" mat-button color="primary">
+                    Choose file
+                  </button>
+                  <input hidden #idfDocument type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event, 'idfDocument')">
+                  <p class="text-xs text-gray-500 mt-1">{{ shipmentForm.get('idfDocument').value?.name || 'No file chosen' }}</p>
+                  <p class="text-xs text-gray-400 mt-1">PDF, JPG, PNG (Max 500KB)</p>
+                  <!-- Embedded Error Message -->
+                  <div *ngIf="duplicateFileErrors['idfDocument']" class="mt-2 flex items-center justify-center">
+                    <mat-icon class="text-red-500 mr-1" style="font-size: 16px; width: 16px; height: 16px;">error</mat-icon>
+                    <p class="text-red-500 text-xs">{{ duplicateFileErrors['idfDocument'] }}</p>
+                    <mat-icon class="text-red-500 cursor-pointer ml-2" style="font-size: 16px; width: 16px; height: 16px;" (click)="clearDuplicateError('idfDocument'); $event.stopPropagation()">close</mat-icon>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="!quoteData.invoiceIdExists">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Invoice <span class="text-red-500">*</span>
+                </label>
+                <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
+                     [ngClass]="duplicateFileErrors['invoice'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                     (click)="invoice.click()">
+                  <button type="button" mat-button color="primary">
+                    Choose file
+                  </button>
+                  <input hidden #invoice type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event, 'invoice')">
+                  <p class="text-xs text-gray-500 mt-1">{{ shipmentForm.get('invoice').value?.name || 'No file chosen' }}</p>
+                  <p class="text-xs text-gray-400 mt-1">PDF, JPG, PNG (Max 500KB)</p>
+                  <!-- Embedded Error Message -->
+                  <div *ngIf="duplicateFileErrors['invoice']" class="mt-2 flex items-center justify-center">
+                    <mat-icon class="text-red-500 mr-1" style="font-size: 16px; width: 16px; height: 16px;">error</mat-icon>
+                    <p class="text-red-500 text-xs">{{ duplicateFileErrors['invoice'] }}</p>
+                    <mat-icon class="text-red-500 cursor-pointer ml-2" style="font-size: 16px; width: 16px; height: 16px;" (click)="clearDuplicateError('invoice'); $event.stopPropagation()">close</mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                <div *ngIf="!quoteData.kraDocumentExists">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      KRA PIN Certificate <span class="text-red-500">*</span>
+                    </label>
+                    <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
+                         [ngClass]="duplicateFileErrors['kraPinCertificate'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                         (click)="kraPinCertificate.click()">
+                      <button type="button" mat-button color="primary">
+                        Choose file
+                      </button>
+                      <input hidden #kraPinCertificate type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event, 'kraPinCertificate')">
+                      <p class="text-xs text-gray-500 mt-1">{{ shipmentForm.get('kraPinCertificate').value?.name || 'No file chosen' }}</p>
+                      <p class="text-xs text-gray-400 mt-1">PDF, JPG, PNG (Max 500KB)</p>
+                      <!-- Embedded Error Message -->
+                      <div *ngIf="duplicateFileErrors['kraPinCertificate']" class="mt-2 flex items-center justify-center">
+                        <mat-icon class="text-red-500 mr-1" style="font-size: 16px; width: 16px; height: 16px;">error</mat-icon>
+                        <p class="text-red-500 text-xs">{{ duplicateFileErrors['kraPinCertificate'] }}</p>
+                        <mat-icon class="text-red-500 cursor-pointer ml-2" style="font-size: 16px; width: 16px; height: 16px;" (click)="clearDuplicateError('kraPinCertificate'); $event.stopPropagation()">close</mat-icon>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="!quoteData.idDocumentExists">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      National ID <span class="text-red-500">*</span>
+                    </label>
+                    <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
+                         [ngClass]="duplicateFileErrors['nationalId'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                         (click)="nationalId.click()">
+                      <button type="button" mat-button color="primary">
+                        Choose file
+                      </button>
+                      <input hidden #nationalId type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event, 'nationalId')">
+                      <p class="text-xs text-gray-500 mt-1">{{ shipmentForm.get('nationalId').value?.name || 'No file chosen' }}</p>
+                      <p class="text-xs text-gray-400 mt-1">PDF, JPG, PNG (Max 500KB)</p>
+                      <!-- Embedded Error Message -->
+                      <div *ngIf="duplicateFileErrors['nationalId']" class="mt-2 flex items-center justify-center">
+                        <mat-icon class="text-red-500 mr-1" style="font-size: 16px; width: 16px; height: 16px;">error</mat-icon>
+                        <p class="text-red-500 text-xs">{{ duplicateFileErrors['nationalId'] }}</p>
+                        <mat-icon class="text-red-500 cursor-pointer ml-2" style="font-size: 16px; width: 16px; height: 16px;" (click)="clearDuplicateError('nationalId'); $event.stopPropagation()">close</mat-icon>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="flex items-center">
+                <mat-checkbox formControlName="agreeToTerms" color="primary"></mat-checkbox>
+                <label class="text-sm text-gray-600 ml-2">
+                  I agree to the <a (click)="openTermsOfUse($event)" class="text-blue-600 hover:underline cursor-pointer">Terms of Use</a> and to the <a (click)="openPrivacyPolicy($event)" class="text-blue-600 hover:underline cursor-pointer">Data Privacy Policy</a>
+                </label>
+            </div>
+          </div>
+
+          <!-- Personal Details & KYC -->
+          <div class="mb-3 mt-2 p-4 border-2 border-green-200 rounded-lg bg-green-50/30" [class.disabled-section]="!shipmentForm.get('agreeToTerms')?.value">
+            <h2 class="text-sm font-semibold text-gray-900 mb-3">Importer Details</h2>
+            <div *ngIf="!shipmentForm.get('agreeToTerms')?.value" class="disabled-overlay">
+              <mat-icon>lock</mat-icon>
+              <p>Please agree to the Terms of Use and Data Privacy Policy to enable this section</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-2">
+                        ID Number *
+                    </label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('idNumber')?.invalid && shipmentForm.get('idNumber')?.touched) || !shipmentForm.get('idNumber')?.value ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('idNumber')?.value ? ' font-bold' : '')"
+                           formControlName="idNumber"
+                           placeholder="Enter your ID number"
+                           maxlength="10"
+                           (input)="onIdNumberInput($event)">
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-2">
+                        KRA PIN *
+                    </label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('kraPin')?.invalid && shipmentForm.get('kraPin')?.touched) || !shipmentForm.get('kraPin')?.value ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('kraPin')?.value ? ' font-bold' : '')"
+                           formControlName="kraPin"
+                           placeholder="Enter your KRA PIN"
+                           maxlength="11"
+                           style="text-transform: uppercase;"
+                           (input)="onKraPinInput($event)">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label class="block text-base font-medium text-gray-700 mb-1">First Name *</label>
+                <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                       ((shipmentForm.get('firstName')?.invalid && shipmentForm.get('firstName')?.touched) || !shipmentForm.get('firstName')?.value ?
+                       'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                       (shipmentForm.get('firstName')?.value ? ' font-bold' : '')"
+                       (input)="onFirstNameInput($event)"
+                       formControlName="firstName"
+                       placeholder="Enter your first name">
+              </div>
+              <div>
+                <label class="block text-base font-medium text-gray-700 mb-1">Last Name *</label>
+                <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                       ((shipmentForm.get('lastName')?.invalid && shipmentForm.get('lastName')?.touched) || !shipmentForm.get('lastName')?.value ?
+                       'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                       (shipmentForm.get('lastName')?.value ? ' font-bold' : '')"
+                       (input)="onLastNameInput($event)"
+                       formControlName="lastName"
+                       placeholder="Enter your last name">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Email Address *</label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('emailAddress')?.invalid && shipmentForm.get('emailAddress')?.touched) || !shipmentForm.get('emailAddress')?.value ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('emailAddress')?.value ? ' font-bold' : '')"
+                           (input)="onEmailInput($event)"
+                           formControlName="emailAddress"
+                           placeholder="Enter your email address">
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Phone Number *</label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('phoneNumber')?.invalid && shipmentForm.get('phoneNumber')?.touched) || !shipmentForm.get('phoneNumber')?.value ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('phoneNumber')?.value ? ' font-bold' : '')"
+                           (input)="onPhoneNumberInput($event)"
+                           formControlName="phoneNumber"
+                           placeholder="Enter your phone number">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Postal Address *</label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((!shipmentForm.get('streetAddress')?.value) ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('streetAddress')?.value ? ' font-bold' : '')"
+                           formControlName="streetAddress"
+                           placeholder="Enter your postal address"
+                           (input)="onPostalAddressInput($event)">
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Postal Code *</label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((!shipmentForm.get('postalCode')?.value) ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('postalCode')?.value ? ' font-bold' : '')"
+                           formControlName="postalCode"
+                           placeholder="Enter your postal code"
+                           (input)="onPostalCodeInput($event)">
+                </div>
+            </div>
+          </div>
+
+          <!-- Shipment Details -->
+          <div class="mb-3 mt-2 p-4 border-2 border-purple-200 rounded-lg bg-purple-50/30" [class.disabled-section]="!shipmentForm.get('agreeToTerms')?.value">
+            <h2 class="text-sm font-semibold text-gray-900 mb-3">Shipment Details</h2>
+            <div *ngIf="!shipmentForm.get('agreeToTerms')?.value" class="disabled-overlay">
+              <mat-icon>lock</mat-icon>
+              <p>Please agree to the Terms of Use and Data Privacy Policy to enable this section</p>
+            </div>
+
+            <!-- Mode of Shipment | Trade Type -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-2">Mode of Shipment *</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            formControlName="modeOfShipment">
+                      <option value="">Select mode of shipment</option>
+                      <option value="1">Sea</option>
+                      <option value="2">Air</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-2">Trade Type</label>
+                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+                           formControlName="tradeType"
+                           value="Marine Cargo Import"
+                           readonly>
+                </div>
+            </div>
+
+            <!-- Marine Packaging Type -->
+            <div class="mb-4">
+                <label class="block text-base font-medium text-gray-700 mb-2">Marine Packaging Type</label>
+                <mat-radio-group formControlName="commodityType" color="primary">
+                  <mat-radio-button value="1" class="mr-4">Containerized</mat-radio-button>
+                  <mat-radio-button value="2">Non-Containerized</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <!-- Vessel Name | IDF Number -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Vessel Name</label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('vesselName')?.invalid && shipmentForm.get('vesselName')?.touched) ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('vesselName')?.value ? ' font-bold' : '')"
+                           formControlName="vesselName"
+                           placeholder="Enter the vessel name"
+                           (input)="onVesselNameInput($event)">
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">
+                        IDF Number *
+                    </label>
+                    <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                           ((shipmentForm.get('gcrNumber')?.invalid && shipmentForm.get('gcrNumber')?.touched) || !shipmentForm.get('gcrNumber')?.value ?
+                           'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                           (shipmentForm.get('gcrNumber')?.value ? ' font-bold' : '')"
+                           formControlName="gcrNumber"
+                           placeholder="Enter IDF number"
+                           maxlength="16"
+                           style="text-transform: uppercase;"
+                           (input)="onIdfNumberInput($event)">
+                </div>
+            </div>
+
+            <!-- Sum Insured (Full Width) -->
+            <div class="mb-3">
+                <label class="block text-base font-medium text-gray-700 mb-1">Sum Insured (KES) *</label>
+                <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                       (!shipmentForm.get('sumInsured')?.value ?
+                       'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500')"
+                       type="text"
+                       formControlName="sumInsured"
+                       appThousands
+                       placeholder="Enter sum insured amount"
+                       inputmode="numeric">
+            </div>
+
+            <!-- Select Category | Cargo Type -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Select Category *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('selectCategory')?.invalid && shipmentForm.get('selectCategory')?.touched) || !shipmentForm.get('selectCategory')?.value}">
+                        <mat-select formControlName="selectCategory" (openedChange)="onDropdownOpen('categories')">
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="categorySearchCtrl" placeholderLabel="Search categories..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let category of filteredCategories | async" [value]="category.id">
+                                {{ category.catname }}
+                            </mat-option>
+                            <mat-option *ngIf="isLoadingCategories" disabled>
+                                <mat-spinner diameter="20"></mat-spinner> Loading...
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Cargo Type *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('salesCategory')?.invalid && shipmentForm.get('salesCategory')?.touched) || !shipmentForm.get('salesCategory')?.value}">
+                        <mat-select formControlName="salesCategory">
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="cargoTypeSearchCtrl" placeholderLabel="Search cargo types..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let cargoType of filteredCargoTypes | async" [value]="cargoType.id">
+                                {{ cargoType.ctname }}
+                            </mat-option>
+                            <mat-option *ngIf="isLoadingCargoTypes" disabled>
+                                <mat-spinner diameter="20"></mat-spinner> Loading...
+                            </mat-option>
+                            <mat-option *ngIf="!isLoadingCargoTypes && (filteredCargoTypes | async)?.length === 0" disabled>
+                                Please select a category first
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Date of Dispatch | Estimated Time of Arrival -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Date of Dispatch *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('dateOfDispatch')?.invalid && shipmentForm.get('dateOfDispatch')?.touched) || !shipmentForm.get('dateOfDispatch')?.value}">
+                        <input matInput [matDatepicker]="dispatchPicker" formControlName="dateOfDispatch" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="dispatchPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #dispatchPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Date of Arrival *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('estimatedArrival')?.invalid && shipmentForm.get('estimatedArrival')?.touched) || !shipmentForm.get('estimatedArrival')?.value}">
+                        <input matInput [matDatepicker]="arrivalPicker" formControlName="estimatedArrival" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #arrivalPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Country of Origin | Loading Port -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Country of Origin *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('countryOfOrigin')?.invalid && shipmentForm.get('countryOfOrigin')?.touched) || !shipmentForm.get('countryOfOrigin')?.value}">
+                        <mat-select formControlName="countryOfOrigin"
+                                    #countrySelect
+                                    (openedChange)="onSelectOpen($event)"
+                                    (scroll)="onScroll($event)">
+                            <div class="search-container" (click)="$event.stopPropagation()">
+                                <mat-icon>search</mat-icon>
+                                <input
+                                    matInput
+                                    type="text"
+                                    placeholder="Search..."
+                                    [formControl]="countryFilterCtrl"
+                                    (keydown)="$event.stopPropagation()"
+                                />
+                            </div>
+                            <mat-option *ngFor="let country of countries" [value]="country.id">
+                                {{ country.countryname }}
+                            </mat-option>
+                            <mat-option *ngIf="loading">
+                                <mat-spinner diameter="20"></mat-spinner> Loading...
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Loading Port *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('loadingPort')?.invalid && shipmentForm.get('loadingPort')?.touched) || !shipmentForm.get('loadingPort')?.value}">
+                        <mat-select formControlName="loadingPort"
+                                    #portSelect
+                                    (openedChange)="onSelectOpenPorts($event)"
+                                    (scroll)="onScrollPorts($event)">
+                            <div class="search-container" (click)="$event.stopPropagation()">
+                                <mat-icon>search</mat-icon>
+                                <input
+                                    matInput
+                                    type="text"
+                                    placeholder="Search..."
+                                    [formControl]="loadingPortSearchCtrl"
+                                    (keydown)="$event.stopPropagation()"
+                                />
+                            </div>
+                            <mat-option *ngFor="let port of loadingPorts" [value]="port.id">
+                                {{ port.portName }}
+                            </mat-option>
+                            <mat-option *ngIf="isLoadingLoadingPorts">
+                                <mat-spinner diameter="20"></mat-spinner> Loading ports...
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Port of Discharge | Final Destination -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Port of Discharge *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('portOfDischarge')?.invalid && shipmentForm.get('portOfDischarge')?.touched) || !shipmentForm.get('portOfDischarge')?.value}">
+                        <mat-select formControlName="portOfDischarge" (openedChange)="onDropdownOpen('dischargePorts')"
+                                   (scroll)="onDischargePortScroll()">
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="dischargePortSearchCtrl" placeholderLabel="Search discharge ports..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let port of filteredDischargePorts | async" [value]="getPortId(port)">
+                                {{ getPortDisplayName(port) }}
+                            </mat-option>
+                            <mat-option *ngIf="isLoadingDischargePorts" disabled>
+                                <mat-spinner diameter="20"></mat-spinner> Loading ports...
+                            </mat-option>
+                            <mat-option *ngIf="(filteredDischargePorts | async)?.length === 0 && !isLoadingDischargePorts" disabled>
+                                <em>⚠️ Ports unavailable. Please contact support or try again later.</em>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <label class="block text-base font-medium text-gray-700 mb-1">Final Destination *</label>
+                    <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
+                                    [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('finalDestination')?.invalid && shipmentForm.get('finalDestination')?.touched) || !shipmentForm.get('finalDestination')?.value}">
+                        <mat-select formControlName="finalDestination">
+                            <mat-option>
+                                <ngx-mat-select-search [formControl]="countySearchCtrl" placeholderLabel="Search counties..."></ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let county of filteredCounties | async" [value]="county.id">
+                                {{ county.portName }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="block text-base font-medium text-gray-700 mb-1">Description of Goods *</label>
+                <textarea [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                          (!shipmentForm.get('goodsDescription')?.value ?
+                          'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500')"
+                          formControlName="goodsDescription"
+                          placeholder="Enter description of goods"
+                          rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Summary Section - Order 2 on mobile, Order 2 on desktop -->
+      <div class="lg:col-span-5 order-2">
+        <div class="bg-white rounded-lg shadow-sm border-2 border-orange-200 bg-orange-50/30 p-4 lg:h-full flex flex-col" style="min-height: 600px;">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4 text-center">Payment Summary</h2>
+
+          <!-- Cargo Protection Card -->
+          <div class="cargo-protection-card mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="protection-header">
+              <span class="protection-title text-base font-medium">Cargo Protection</span>
+              <mat-icon class="info-icon">info</mat-icon>
+            </div>
+            <div class="protection-content">
+              <span class="protection-value text-base font-semibold">{{ getCargoProtectionName() }}</span>
+            </div>
+          </div>
+
+          <!-- Payment Breakdown -->
+          <div class="payment-breakdown mb-4 p-4 bg-gray-50 rounded-lg border-2 border-blue-300 ring-2 ring-blue-100">
+            <div class="flex justify-between text-base mb-3">
+              <span class="font-medium">Sum Insured</span>
+              <span class="font-semibold">KES {{ (shipmentForm.get('sumInsured')?.value || 0) | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-base mb-3">
+              <span class="font-medium">Basic Premium</span>
+              <span class="font-semibold">KES {{ quoteData.premium | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-base mb-3">
+              <span class="font-medium">PHCF</span>
+              <span class="font-semibold">KES {{ quoteData.phcf  | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-base mb-3">
+              <span class="font-medium">Training Levy</span>
+              <span class="font-semibold">KES {{ quoteData.traininglevy | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between text-base mb-3">
+              <span class="font-medium">Stamp Duty(0.05%)</span>
+              <span class="font-semibold">KES {{ quoteData.sd | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="flex justify-between text-lg font-bold mb-4 pb-3 border-b-2 border-gray-300 bg-blue-50 p-3 rounded-lg">
+            <span>Total Amount</span>
+            <span class="text-blue-600">KES {{ quoteData.netprem | number:'1.2-2' }}</span>
+          </div>
+
+          <!-- M-Pesa Number Field -->
+          <div class="mb-4 mt-2" *ngIf="isMakePaymentNow">
+              <div class="flex justify-between text-lg font-bold mb-4 pb-3 border-b-2 border-gray-300 bg-blue-50 p-3 rounded-lg">
+                  <span>Paybill Number:</span>
+                  <span class="text-blue-600">853338</span>
+              </div>
+              <div class="flex justify-between text-lg font-bold mb-4 pb-3 border-b-2 border-gray-300 bg-blue-50 p-3 rounded-lg">
+                  <span>Account Number:</span>
+                  <span class="text-blue-600">{{ paymentRefNo}}</span>
+              </div>
+            <label class="block text-base font-medium text-gray-700 mb-2">M-Pesa Number *</label>
+            <input [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent ' +
+                   ((shipmentForm.get('mpesaNumber')?.invalid && shipmentForm.get('mpesaNumber')?.touched) || !shipmentForm.get('mpesaNumber')?.value ?
+                   'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500') +
+                   (shipmentForm.get('mpesaNumber')?.value ? ' font-bold' : '')"
+                   formControlName="mpesaNumber"
+                   placeholder="Enter M-Pesa number"
+                   maxlength="10"
+                   (input)="onMpesaNumberInput($event)">
+          </div>
+            <div class="mb-4 mt-2" *ngIf="!isMakePaymentNow">
+              <button mat-raised-button color="primary" class="w-full mt-2 mb-2 pay-now-button" (click)="onSubmit()" [disabled]="isSubmitting || !isFormValid">
+                <mat-spinner *ngIf="isSubmitting" diameter="24" class="mr-2"></mat-spinner>
+                {{ isSubmitting ? 'Processing...' : (!isFormValid ? 'Complete All Fields' : 'Submit Application') }}
+              </button>
+            </div>
+            <div class="mb-4 mt-2" *ngIf="isMakePaymentNow">
+                <button mat-raised-button color="primary" class="w-full mt-2 mb-2 pay-now-button" [disabled]="isProcessPayment" (click)="initiatePayment()">
+                    <mat-spinner *ngIf="isProcessPayment" diameter="24" class="mr-2"></mat-spinner>
+                    {{ isProcessPayment ? 'Processing...' : 'Make Payment' }}
+                </button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

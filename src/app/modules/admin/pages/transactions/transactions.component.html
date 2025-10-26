@@ -1,0 +1,121 @@
+<div class="transactions-container w-full max-w-full overflow-x-hidden">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4">
+        <div class="flex-1 min-w-0">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Transactions</h1>
+            <p class="text-gray-600 mt-1 text-xs sm:text-sm lg:text-base">View and manage all payment transactions</p>
+        </div>
+        <button class="px-3 sm:px-4 py-2 bg-[#04b2e1] text-white rounded-lg hover:bg-[#21275c] transition-colors whitespace-nowrap self-start sm:self-auto text-sm sm:text-base">
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export Transactions
+        </button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
+            <label class="text-xs sm:text-sm font-medium text-gray-700">Filter by Status:</label>
+            <select [(ngModel)]="filterStatus" (change)="onFilterChange()" class="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#04b2e1] text-sm">
+                <option value="">All Transactions</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
+            </select>
+            <div class="flex-1"></div>
+            <div class="text-xs sm:text-sm text-gray-600">
+                Total: <span class="font-semibold">{{ totalTransactions }}</span> transactions
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04b2e1]"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h3 class="text-sm font-medium text-red-800">Error Loading Transactions</h3>
+                <p class="text-sm text-red-700 mt-1">{{ error }}</p>
+            </div>
+            <button (click)="retryLoad()" class="ml-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Retry
+            </button>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div *ngIf="!isLoading && !error" class="bg-white rounded-lg shadow-sm overflow-hidden w-full">
+        <!-- Mobile Card View -->
+        <div class="block md:hidden">
+            <div *ngFor="let transaction of transactions" class="border-b border-gray-200 p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-900 truncate">{{ transaction.user }}</h3>
+                        <p class="text-xs text-[#04b2e1] font-medium">{{ transaction.refNo }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ transaction.email }}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ getStatusClass(transaction.status) }}">
+                        {{ transaction.status }}
+                    </span>
+                </div>
+                <div class="mb-2">
+                    <p class="text-xs text-gray-500">{{ transaction.product }}</p>
+                    <p class="text-sm font-semibold text-gray-900">KES {{ transaction.amount | number }}</p>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                    <span>{{ transaction.paymentMethod }}</span>
+                    <span>{{ transaction.date }}</span>
+                </div>
+                <div class="mt-2 text-right">
+                    <button (click)="viewTransaction(transaction.id)" class="text-[#04b2e1] hover:text-[#21275c] text-xs">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ref No</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Email</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Product</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Payment Method</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Date</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let transaction of transactions" class="hover:bg-gray-50">
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-[#04b2e1]">{{ transaction.refNo }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.user }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ transaction.email }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">{{ transaction.product }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">KES {{ transaction.amount | number }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ transaction.paymentMethod }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ getStatusClass(transaction.status) }}">
+                                {{ transaction.status }}
+                            </span>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">{{ transaction.date }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button (click)="viewTransaction(transaction.id)" class="text-[#04b2e1] hover:text-[#21275c]">View Details</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

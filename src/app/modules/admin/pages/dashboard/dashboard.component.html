@@ -1,0 +1,295 @@
+<div class="dashboard-container w-full max-w-full overflow-x-hidden">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4">
+        <div class="flex-1 min-w-0">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p class="text-gray-600 mt-1 text-xs sm:text-sm lg:text-base">Welcome back! Here's what's happening with your platform today.</p>
+        </div>
+        <button class="px-3 sm:px-4 py-2 bg-[#04b2e1] text-white rounded-lg hover:bg-[#21275c] transition-colors whitespace-nowrap self-start sm:self-auto text-sm sm:text-base">
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export Report
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04b2e1]"></div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 w-full">
+        <!-- Total Users -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-[#04b2e1] hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{{ metrics.totalUsers | number }}</p>
+                    <p class="text-xs sm:text-sm text-green-600 mt-1 sm:mt-2">
+                        <span class="font-semibold">↑ 12%</span> from last month
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#04b2e1] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#04b2e1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Quotes -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-[#f36f21] hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Total Quotes</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{{ metrics.totalQuotes | number }}</p>
+                    <p class="text-xs sm:text-sm text-green-600 mt-1 sm:mt-2">
+                        <span class="font-semibold">↑ 8%</span> from last month
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#f36f21] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#f36f21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Premiums -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-[#21275c] hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Total Premiums</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">KES {{ metrics.totalPremiums | number }}</p>
+                    <p class="text-xs sm:text-sm text-green-600 mt-1 sm:mt-2">
+                        <span class="font-semibold">↑ 23%</span> from last month
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-[#21275c] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#21275c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Transactions -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-green-500 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Total Transactions</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{{ metrics.totalTransactions | number }}</p>
+                    <p class="text-xs sm:text-sm text-green-600 mt-1 sm:mt-2">
+                        <span class="font-semibold">↑ 15%</span> from last month
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Users -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-purple-500 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Active Users</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{{ metrics.activeUsers | number }}</p>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2">
+                        <span class="font-semibold">{{ (metrics.activeUsers / metrics.totalUsers * 100) | number:'1.0-0' }}%</span> of total
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500 bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Transactions -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border-l-4 border-yellow-500 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm font-medium text-gray-600">Pending Transactions</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{{ metrics.pendingTransactions | number }}</p>
+                    <p class="text-xs sm:text-sm text-yellow-600 mt-1 sm:mt-2">
+                        <span class="font-semibold">Requires attention</span>
+                    </p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-500 bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 w-full">
+        <!-- Website Traffic Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Website Traffic</h3>
+                <span class="text-xs sm:text-sm text-gray-500">Last 7 days</span>
+            </div>
+            <div class="h-48 sm:h-64">
+                <app-chart [type]="'line'"></app-chart>
+            </div>
+            <div class="mt-3 sm:mt-4 grid grid-cols-3 gap-2 sm:gap-4 text-center">
+                <div>
+                    <p class="text-lg sm:text-2xl font-bold text-[#04b2e1]">12.5K</p>
+                    <p class="text-xs text-gray-500">Total Visits</p>
+                </div>
+                <div>
+                    <p class="text-lg sm:text-2xl font-bold text-[#f36f21]">8.2K</p>
+                    <p class="text-xs text-gray-500">Unique Visitors</p>
+                </div>
+                <div>
+                    <p class="text-lg sm:text-2xl font-bold text-[#21275c]">4.3K</p>
+                    <p class="text-xs text-gray-500">Page Views</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Analytics Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Sales Analytics</h3>
+                <span class="text-xs sm:text-sm text-gray-500">This month</span>
+            </div>
+            <div class="h-48 sm:h-64">
+                <app-chart [type]="'line'"></app-chart>
+            </div>
+            <div class="mt-3 sm:mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div class="bg-blue-50 rounded-lg p-3">
+                    <p class="text-xs sm:text-sm text-gray-600">Marine Cargo</p>
+                    <p class="text-lg sm:text-xl font-bold text-[#04b2e1]">KES 8.5M</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-3">
+                    <p class="text-xs sm:text-sm text-gray-600">Travel Insurance</p>
+                    <p class="text-lg sm:text-xl font-bold text-purple-600">KES 4.0M</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Distribution -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 w-full">
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 lg:col-span-2">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Product Distribution</h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs sm:text-sm font-medium text-gray-700">Marine Cargo Insurance</span>
+                        <span class="text-xs sm:text-sm font-semibold text-gray-900">68%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-[#04b2e1] h-2 rounded-full" style="width: 68%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs sm:text-sm font-medium text-gray-700">Travel Insurance</span>
+                        <span class="text-xs sm:text-sm font-semibold text-gray-900">32%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-[#f36f21] h-2 rounded-full" style="width: 32%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bg-gradient-to-br from-[#21275c] to-[#2d3470] rounded-xl shadow-sm p-4 sm:p-6 text-white">
+            <h3 class="text-base sm:text-lg font-semibold mb-4">Quick Stats</h3>
+            <div class="space-y-3 sm:space-y-4">
+                <div class="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-600">
+                    <span class="text-xs sm:text-sm">Conversion Rate</span>
+                    <span class="text-base sm:text-lg font-bold">23.5%</span>
+                </div>
+                <div class="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-600">
+                    <span class="text-xs sm:text-sm">Avg. Quote Value</span>
+                    <span class="text-base sm:text-lg font-bold">KES 3.2M</span>
+                </div>
+                <div class="flex justify-between items-center pb-2 sm:pb-3 border-b border-gray-600">
+                    <span class="text-xs sm:text-sm">Success Rate</span>
+                    <span class="text-base sm:text-lg font-bold">94.2%</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs sm:text-sm">Avg. Response Time</span>
+                    <span class="text-base sm:text-lg font-bold">2.3 hrs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <div *ngIf="!isLoading" class="bg-white rounded-xl shadow-sm overflow-hidden w-full">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900">Recent Transactions</h3>
+        </div>
+        
+        <!-- Mobile Card View -->
+        <div class="block md:hidden">
+            <div *ngFor="let transaction of recentTransactions" class="border-b border-gray-200 p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-medium text-gray-900 truncate">{{ transaction.user }}</h4>
+                        <p class="text-xs text-gray-500 truncate">{{ transaction.product }}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ getStatusClass(transaction.status) }}">
+                        {{ transaction.status }}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                    <span>ID: #{{ transaction.id }}</span>
+                    <span>{{ transaction.date }}</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-semibold text-gray-900">KES {{ transaction.amount | number }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Product</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let transaction of recentTransactions" class="hover:bg-gray-50">
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ transaction.id }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.user }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ transaction.product }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">KES {{ transaction.amount | number }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ getStatusClass(transaction.status) }}">
+                                {{ transaction.status }}
+                            </span>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">{{ transaction.date }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <a href="/admin/transactions" class="text-[#04b2e1] hover:text-[#21275c] font-medium text-xs sm:text-sm">
+                View all transactions →
+            </a>
+        </div>
+    </div>
+</div>

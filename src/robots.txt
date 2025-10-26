@@ -1,0 +1,50 @@
+# Geminia Insurance - Robots.txt
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Allow: /sign-up/
+Allow: /sign-up/marine-quote
+Allow: /sign-up/travel-quote
+Allow: /sign-up/marine-guard-pro
+Allow: /home
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /sign-up/dashboard
+Disallow: /api/
+
+# Disallow authentication pages
+Disallow: /sign-in
+Disallow: /sign-out
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Crawl delay (optional, adjust based on server capacity)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://yoursite.com/sitemap.xml
+
+# Specific bot rules
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

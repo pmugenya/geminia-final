@@ -1,0 +1,134 @@
+<div class="premium-buyers-container w-full max-w-full overflow-x-hidden">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4">
+        <div class="flex-1 min-w-0">
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Premium Buyers</h1>
+            <p class="text-gray-600 mt-1 text-xs sm:text-sm lg:text-base">View all users who have purchased insurance premiums</p>
+        </div>
+        <button class="px-3 sm:px-4 py-2 bg-[#04b2e1] text-white rounded-lg hover:bg-[#21275c] transition-colors whitespace-nowrap self-start sm:self-auto text-sm sm:text-base">
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export Report
+        </button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
+            <label class="text-xs sm:text-sm font-medium text-gray-700">Filter by Product:</label>
+            <select [(ngModel)]="filterProduct" (change)="onFilterChange()" class="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#04b2e1] text-sm">
+                <option value="">All Products</option>
+                <option value="marine">Marine Cargo</option>
+                <option value="travel">Travel Insurance</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#04b2e1]"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h3 class="text-sm font-medium text-red-800">Error Loading Premium Buyers</h3>
+                <p class="text-sm text-red-700 mt-1">{{ error }}</p>
+            </div>
+            <button (click)="retryLoad()" class="ml-auto px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Retry
+            </button>
+        </div>
+    </div>
+
+    <!-- Premium Buyers Table -->
+    <div *ngIf="!isLoading && !error" class="bg-white rounded-lg shadow-sm overflow-hidden w-full">
+        <!-- Mobile Card View -->
+        <div class="block md:hidden">
+            <div *ngFor="let buyer of premiumBuyers" class="border-b border-gray-200 p-4 hover:bg-gray-50">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-900 truncate">{{ buyer.name }}</h3>
+                        <p class="text-xs text-[#04b2e1] font-medium">{{ buyer.policyRef }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ buyer.email }}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ getStatusClass(buyer.status) }}">
+                        {{ buyer.status }}
+                    </span>
+                </div>
+                <div class="mb-2">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ getProductClass(buyer.product) }}">
+                        {{ buyer.product }}
+                    </span>
+                </div>
+                <div class="mb-2">
+                    <p class="text-sm font-semibold text-gray-900">Premium: KES {{ buyer.premium | number }}</p>
+                    <p class="text-xs text-gray-500">Sum Insured: KES {{ buyer.sumInsured | number }}</p>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                    <span>ID: #{{ buyer.id }}</span>
+                    <span>{{ buyer.phone }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-xs text-gray-500">{{ buyer.purchaseDate }}</span>
+                    <div class="flex space-x-2">
+                        <button class="text-[#04b2e1] hover:text-[#21275c] text-xs">View Policy</button>
+                        <button class="text-[#f36f21] hover:text-red-700 text-xs">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Email</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Phone</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Policy Ref</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premium</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Sum Insured</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Purchase Date</th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let buyer of premiumBuyers" class="hover:bg-gray-50">
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ buyer.id }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ buyer.name }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">{{ buyer.email }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">{{ buyer.phone }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ getProductClass(buyer.product) }}">
+                                {{ buyer.product }}
+                            </span>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-[#04b2e1]">{{ buyer.policyRef }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">KES {{ buyer.premium | number }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">KES {{ buyer.sumInsured | number }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ getStatusClass(buyer.status) }}">
+                                {{ buyer.status }}
+                            </span>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">{{ buyer.purchaseDate }}</td>
+                        <td class="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-[#04b2e1] hover:text-[#21275c] mr-1 lg:mr-2 text-xs lg:text-sm">View Policy</button>
+                            <button class="text-[#f36f21] hover:text-red-700 text-xs lg:text-sm">Download</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

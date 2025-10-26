@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Geminia Insurance</title>
+        <meta charset="utf-8" />
+        <meta
+            name="description"
+            content="Admin Template and Starter Kit with Angular, Angular Material Components and TailwindCSS"
+        />
+        <meta
+            name="keywords"
+            content="Fuse,HTML,CSS,Angular,Angular 13,Angular 14,Angular 15,Material,Angular Components,Tailwind,Tailwind CSS,TailwindCSS,Admin Template,Admin Starter Kit"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0"
+        />
+
+        <!-- Security Headers -->
+        <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+        <meta http-equiv="X-Frame-Options" content="DENY" />
+        <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+        <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+        <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+
+        <!-- Content Security Policy -->
+        <meta http-equiv="Content-Security-Policy"
+              content="default-src 'self';
+                       script-src 'self' 'unsafe-inline' 'unsafe-eval';
+                       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                       img-src 'self' data: https:;
+                       font-src 'self' data: https://fonts.gstatic.com;
+                       connect-src 'self' http://192.168.165.79:8080 https://fonts.googleapis.com https://fonts.gstatic.com;" />
+
+        <base href="/" />
+
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="manifest.webmanifest" />
+        <meta name="theme-color" content="#1976d2" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Geminia" />
+
+        <!-- Apple Touch Icons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-192x192.png" />
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://yoursite.com/" />
+
+        <!-- Fonts -->
+        <link href="https://fonts.gstatic.com" rel="preconnect" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Icon fonts -->
+        <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+        />
+    </head>
+
+    <body>
+        <!-- Splash screen -->
+        <fuse-splash-screen>
+            <img src="images/logo/logo.svg" alt="Fuse logo" />
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </fuse-splash-screen>
+
+        <!-- App root -->
+        <app-root></app-root>
+    </body>
+</html>
