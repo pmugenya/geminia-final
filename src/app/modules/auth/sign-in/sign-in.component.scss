@@ -62,3 +62,9 @@ fuse-alert[ng-reflect-type='error'] .fuse-alert-message {
   width: 1rem;
   vertical-align: middle;
 }
+
+/* Ensure login form inputs are not bold */
+input[formControlName="username"],
+input[formControlName="password"] {
+  font-weight: 400 !important; /* Normal weight */
+}

@@ -1966,8 +1966,26 @@ export class MarineCargoQuotationComponent implements OnInit, OnDestroy, AfterVi
             if (this.isLoggedIn) {
                 this.user = user as EnhancedStoredUser;
                 console.log(this.user);
+                // Remove validators from importer fields when user is logged in
+                this.quotationForm.get('firstName')?.clearValidators();
+                this.quotationForm.get('lastName')?.clearValidators();
+                this.quotationForm.get('email')?.clearValidators();
+                this.quotationForm.get('phoneNumber')?.clearValidators();
+                this.quotationForm.get('firstName')?.updateValueAndValidity();
+                this.quotationForm.get('lastName')?.updateValueAndValidity();
+                this.quotationForm.get('email')?.updateValueAndValidity();
+                this.quotationForm.get('phoneNumber')?.updateValueAndValidity();
             } else {
                 this.user = null;
+                // Re-add validators when user is not logged in
+                this.quotationForm.get('firstName')?.setValidators([Validators.required, CustomValidators.firstName]);
+                this.quotationForm.get('lastName')?.setValidators([Validators.required, CustomValidators.lastName]);
+                this.quotationForm.get('email')?.setValidators([Validators.required, CustomValidators.email]);
+                this.quotationForm.get('phoneNumber')?.setValidators([Validators.required, CustomValidators.phoneNumber]);
+                this.quotationForm.get('firstName')?.updateValueAndValidity();
+                this.quotationForm.get('lastName')?.updateValueAndValidity();
+                this.quotationForm.get('email')?.updateValueAndValidity();
+                this.quotationForm.get('phoneNumber')?.updateValueAndValidity();
             }
         });
 
@@ -2391,6 +2409,20 @@ export class MarineCargoQuotationComponent implements OnInit, OnDestroy, AfterVi
     private showToast(message: string): void {
         this.toastMessage = message;
         setTimeout(() => (this.toastMessage = ''), 5000);
+    }
+
+    // Format amount to hide .00 decimals for whole numbers
+    formatAmount(value: number): string {
+        if (!value && value !== 0) return '0';
+        
+        // Check if the number is a whole number
+        if (value % 1 === 0) {
+            // Return without decimals, with thousand separators
+            return value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        } else {
+            // Return with 2 decimal places, with thousand separators
+            return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
     }
 
     isFieldInvalid(form: FormGroup, field: string): boolean {

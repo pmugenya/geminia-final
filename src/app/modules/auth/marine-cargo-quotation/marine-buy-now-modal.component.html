@@ -28,7 +28,7 @@
                   IDF Document <span class="text-red-500">*</span>
                 </label>
                 <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
-                     [ngClass]="duplicateFileErrors['idfDocument'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                     [ngClass]="duplicateFileErrors['idfDocument'] ? 'border-red-500 bg-red-50' : (!shipmentForm.get('idfDocument')?.value ? 'border-red-500' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50')"
                      (click)="idfDocument.click()">
                   <button type="button" mat-button color="primary">
                     Choose file
@@ -49,7 +49,7 @@
                   Invoice <span class="text-red-500">*</span>
                 </label>
                 <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
-                     [ngClass]="duplicateFileErrors['invoice'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                     [ngClass]="duplicateFileErrors['invoice'] ? 'border-red-500 bg-red-50' : (!shipmentForm.get('invoice')?.value ? 'border-red-500' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50')"
                      (click)="invoice.click()">
                   <button type="button" mat-button color="primary">
                     Choose file
@@ -72,7 +72,7 @@
                       KRA PIN Certificate <span class="text-red-500">*</span>
                     </label>
                     <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
-                         [ngClass]="duplicateFileErrors['kraPinCertificate'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                         [ngClass]="duplicateFileErrors['kraPinCertificate'] ? 'border-red-500 bg-red-50' : (!shipmentForm.get('kraPinCertificate')?.value ? 'border-red-500' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50')"
                          (click)="kraPinCertificate.click()">
                       <button type="button" mat-button color="primary">
                         Choose file
@@ -93,7 +93,7 @@
                       National ID <span class="text-red-500">*</span>
                     </label>
                     <div class="border-2 border-dashed rounded-md p-3 text-center cursor-pointer transition-colors"
-                         [ngClass]="duplicateFileErrors['nationalId'] ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'"
+                         [ngClass]="duplicateFileErrors['nationalId'] ? 'border-red-500 bg-red-50' : (!shipmentForm.get('nationalId')?.value ? 'border-red-500' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50')"
                          (click)="nationalId.click()">
                       <button type="button" mat-button color="primary">
                         Choose file
@@ -347,7 +347,7 @@
                     <label class="block text-base font-medium text-gray-700 mb-1">Date of Dispatch *</label>
                     <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
                                     [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('dateOfDispatch')?.invalid && shipmentForm.get('dateOfDispatch')?.touched) || !shipmentForm.get('dateOfDispatch')?.value}">
-                        <input matInput [matDatepicker]="dispatchPicker" formControlName="dateOfDispatch" readonly>
+                        <input matInput [matDatepicker]="dispatchPicker" formControlName="dateOfDispatch" [min]="today" readonly>
                         <mat-datepicker-toggle matSuffix [for]="dispatchPicker"></mat-datepicker-toggle>
                         <mat-datepicker #dispatchPicker></mat-datepicker>
                     </mat-form-field>
@@ -356,9 +356,12 @@
                     <label class="block text-base font-medium text-gray-700 mb-1">Date of Arrival *</label>
                     <mat-form-field appearance="outline" class="w-full" style="min-height: 50px;"
                                     [ngClass]="{'mat-form-field-invalid': (shipmentForm.get('estimatedArrival')?.invalid && shipmentForm.get('estimatedArrival')?.touched) || !shipmentForm.get('estimatedArrival')?.value}">
-                        <input matInput [matDatepicker]="arrivalPicker" formControlName="estimatedArrival" readonly>
+                        <input matInput [matDatepicker]="arrivalPicker" formControlName="estimatedArrival" [min]="shipmentForm.get('dateOfDispatch')?.value || today" readonly>
                         <mat-datepicker-toggle matSuffix [for]="arrivalPicker"></mat-datepicker-toggle>
                         <mat-datepicker #arrivalPicker></mat-datepicker>
+                        <mat-error *ngIf="shipmentForm.get('estimatedArrival')?.hasError('beforeDispatch')">
+                            Date of Arrival cannot be before Date of Dispatch
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>
@@ -493,23 +496,23 @@
           <div class="payment-breakdown mb-4 p-4 bg-gray-50 rounded-lg border-2 border-blue-300 ring-2 ring-blue-100">
             <div class="flex justify-between text-base mb-3">
               <span class="font-medium">Sum Insured</span>
-              <span class="font-semibold">KES {{ (shipmentForm.get('sumInsured')?.value || 0) | number:'1.2-2' }}</span>
+              <span class="font-semibold">KES {{ formatAmount(shipmentForm.get('sumInsured')?.value || 0) }}</span>
             </div>
             <div class="flex justify-between text-base mb-3">
               <span class="font-medium">Basic Premium</span>
-              <span class="font-semibold">KES {{ quoteData.premium | number:'1.2-2' }}</span>
+              <span class="font-semibold">KES {{ formatAmount(quoteData.premium) }}</span>
             </div>
             <div class="flex justify-between text-base mb-3">
               <span class="font-medium">PHCF</span>
-              <span class="font-semibold">KES {{ quoteData.phcf  | number:'1.2-2' }}</span>
+              <span class="font-semibold">KES {{ formatAmount(quoteData.phcf) }}</span>
             </div>
             <div class="flex justify-between text-base mb-3">
               <span class="font-medium">Training Levy</span>
-              <span class="font-semibold">KES {{ quoteData.traininglevy | number:'1.2-2' }}</span>
+              <span class="font-semibold">KES {{ formatAmount(quoteData.traininglevy) }}</span>
             </div>
             <div class="flex justify-between text-base mb-3">
-              <span class="font-medium">Stamp Duty(0.05%)</span>
-              <span class="font-semibold">KES {{ quoteData.sd | number:'1.2-2' }}</span>
+              <span class="font-medium">Stamp Duty<span *ngIf="shipmentForm.get('modeOfShipment')?.value !== '2'">(0.05%)</span></span>
+              <span class="font-semibold">KES {{ formatAmount(quoteData.sd) }}</span>
             </div>
           </div>
           <div class="flex justify-between text-lg font-bold mb-4 pb-3 border-b-2 border-gray-300 bg-blue-50 p-3 rounded-lg">

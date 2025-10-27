@@ -136,13 +136,13 @@ export class CustomValidators {
         };
     }
 
-    // Vessel Name: at least 3 characters (letters and numbers)
+    // Vessel Name: at least 3 characters (letters, numbers, and spaces)
     static vesselName(control: AbstractControl): ValidationErrors | null {
         if (!control.value) return null;
-        const namePattern = /^[A-Za-z0-9]{3,}$/;
+        const namePattern = /^[A-Za-z0-9\s]{3,}$/;
         return namePattern.test(control.value) ? null : {
             vesselName: {
-                message: 'Vessel Name must be at least 3 characters (letters and numbers)'
+                message: 'Vessel Name must be at least 3 characters (letters, numbers, and spaces)'
             }
         };
     }
@@ -1513,8 +1513,9 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
 
     // Track duplicate file errors
     duplicateFileErrors: { [key: string]: string } = {};
-
-
+    
+    // Today's date for min date validation
+    today = new Date();
 
     // Data sources for searchable dropdowns
     countries: Country[] = [];
@@ -1654,6 +1655,9 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
             // Payment
             paymentMethod: ['mpesa', Validators.required]
         });
+
+        // Add date validation
+        this.setupDateValidation();
 
         // Initially disable Importer Details and Shipment Details sections
         this.disableFormSections();
@@ -2875,6 +2879,40 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
         return this.shipmentForm.get('agreeToTerms')?.value || false;
     }
 
+    private setupDateValidation(): void {
+        // Watch for changes in Date of Dispatch
+        this.shipmentForm.get('dateOfDispatch')?.valueChanges.subscribe(dispatchDate => {
+            if (dispatchDate) {
+                const arrivalControl = this.shipmentForm.get('estimatedArrival');
+                const arrivalDate = arrivalControl?.value;
+                
+                // If arrival date exists and is before dispatch date, clear it
+                if (arrivalDate && new Date(arrivalDate) < new Date(dispatchDate)) {
+                    arrivalControl?.setValue('');
+                    arrivalControl?.setErrors({ beforeDispatch: true });
+                }
+            }
+        });
+
+        // Watch for changes in Date of Arrival
+        this.shipmentForm.get('estimatedArrival')?.valueChanges.subscribe(arrivalDate => {
+            if (arrivalDate) {
+                const dispatchDate = this.shipmentForm.get('dateOfDispatch')?.value;
+                
+                // Validate that arrival date is not before dispatch date
+                if (dispatchDate && new Date(arrivalDate) < new Date(dispatchDate)) {
+                    this.shipmentForm.get('estimatedArrival')?.setErrors({ beforeDispatch: true });
+                } else {
+                    // Clear the error if dates are valid
+                    const arrivalControl = this.shipmentForm.get('estimatedArrival');
+                    if (arrivalControl?.hasError('beforeDispatch')) {
+                        arrivalControl.setErrors(null);
+                    }
+                }
+            }
+        });
+    }
+
     private disableFormSections(): void {
         // Disable Importer Details fields
         this.shipmentForm.get('firstName')?.disable();
@@ -3063,17 +3101,31 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
     }
 
     onVesselNameInput(event: any): void {
-        let value = event.target.value.trim();
-        value = value.replace(/[^a-zA-Z0-9]/g, ''); // Allow letters and numbers
-        if (value.length > 0) {
-            value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-        }
+        let value = event.target.value;
+        // Allow letters, numbers, and spaces
+        value = value.replace(/[^a-zA-Z0-9\s]/g, '');
+        // Capitalize first letter of each word
+        value = value.replace(/\b\w/g, (char: string) => char.toUpperCase());
         this.shipmentForm.patchValue({ vesselName: value });
     }
 
     clearDuplicateError(fieldName: string): void {
         if (this.duplicateFileErrors && this.duplicateFileErrors[fieldName]) {
             delete this.duplicateFileErrors[fieldName];
+        }
+    }
+
+    // Format amount to hide .00 decimals for whole numbers
+    formatAmount(value: number): string {
+        if (!value && value !== 0) return '0';
+        
+        // Check if the number is a whole number
+        if (value % 1 === 0) {
+            // Return without decimals, with thousand separators
+            return value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        } else {
+            // Return with 2 decimal places, with thousand separators
+            return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
     }
 

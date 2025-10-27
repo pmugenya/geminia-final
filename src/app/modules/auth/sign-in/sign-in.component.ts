@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +39,7 @@ export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): V
         MatRadioModule, FuseAlertComponent,
     ],
 })
-export class AuthSignInComponent implements OnInit {
+export class AuthSignInComponent implements OnInit, OnDestroy {
     showAlert: boolean = false;
     alert: Alert = { type: 'error', message: '' };
     signInForm!: FormGroup;
@@ -49,12 +49,16 @@ export class AuthSignInComponent implements OnInit {
     showTermsModal = false;
     showDataPrivacyModal = false;
     loginState: 'credentials' | 'otp' = 'credentials';
+    private redirectURL: string | null = null;
+    otpCountdown: number = 0;
+    private otpCountdownInterval: any;
 
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
         private userService: UserService,
         private router: Router,
+        private activatedRoute: ActivatedRoute,
     ) {}
 
     ngOnInit(): void {
@@ -93,6 +97,11 @@ export class AuthSignInComponent implements OnInit {
         });
 
         this.setIndividualValidators(); // Set initial validators for the default 'Individual' type
+        
+        // Capture redirect URL from query params
+        this.activatedRoute.queryParams.subscribe(params => {
+            this.redirectURL = params['redirectURL'] || null;
+        });
     }
 
     // --- Form Control Accessors for cleaner template code ---
@@ -204,6 +213,7 @@ export class AuthSignInComponent implements OnInit {
                 if (res.tempToken) {
                     this.authService.tempToken = res.tempToken;
                     this.loginState = 'otp';
+                    this.startOtpCountdown();
                 } else {
                     this.alert = { type: 'error', message: 'Login failed: Invalid response.' };
                     this.showAlert = true;
@@ -227,7 +237,11 @@ export class AuthSignInComponent implements OnInit {
         this.authService.verifyOtp({ tempToken: this.authService.tempToken, otp }).pipe(
             finalize(() => this.signInForm.enable())
         ).subscribe({
-            next: () => this.router.navigate(['/sign-up/dashboard']),
+            next: () => {
+                // Redirect to saved URL or default dashboard
+                const targetUrl = this.redirectURL || '/sign-up/dashboard';
+                this.router.navigateByUrl(targetUrl);
+            },
             error: (err) => {
                 this.alert = { type: 'error', message: err.message || 'Invalid OTP code.' };
                 this.showAlert = true;
@@ -277,6 +291,36 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = false;
         this.authService.clearTempToken();
         this.signInForm.get('otp')?.reset();
+        this.stopOtpCountdown();
+    }
+
+    /**
+     * Starts the OTP countdown timer (60 seconds)
+     */
+    startOtpCountdown(): void {
+        this.otpCountdown = 60; // Industry standard: 60 seconds
+        this.stopOtpCountdown(); // Clear any existing interval
+        
+        this.otpCountdownInterval = setInterval(() => {
+            this.otpCountdown--;
+            if (this.otpCountdown <= 0) {
+                this.stopOtpCountdown();
+            }
+        }, 1000);
+    }
+
+    /**
+     * Stops the OTP countdown timer
+     */
+    stopOtpCountdown(): void {
+        if (this.otpCountdownInterval) {
+            clearInterval(this.otpCountdownInterval);
+            this.otpCountdownInterval = null;
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.stopOtpCountdown();
     }
 
     // --- UI Helpers ---

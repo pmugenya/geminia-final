@@ -237,6 +237,13 @@ export class AuthService {
      * Sign out
      */
     signOut(): void {
+        // Store current URL before clearing session
+        const currentUrl = this.router.url;
+        const shouldRedirectBack = currentUrl && 
+                                   !currentUrl.includes('/sign-in') && 
+                                   !currentUrl.includes('/sign-up') &&
+                                   !currentUrl.includes('/forgot-password');
+        
         sessionStorage.removeItem('isLoggedIn');
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('userType');
@@ -247,11 +254,19 @@ export class AuthService {
         localStorage.removeItem(this.ACCESS_TOKEN_KEY);
         this.clearTempToken();
         this._authenticated = false;
-        this.router.navigate(['/sign-in']);
+        
+        // Navigate to sign-in with redirect URL if appropriate
+        if (shouldRedirectBack) {
+            this.router.navigate(['/sign-in'], { 
+                queryParams: { redirectURL: currentUrl },
+                queryParamsHandling: 'merge'
+            });
+        } else {
+            this.router.navigate(['/sign-in']);
+        }
     }
 
     /**
-<<<<<<< HEAD
      * Sign up
      *
      * @param user

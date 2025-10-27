@@ -66,29 +66,19 @@
                         <form [formGroup]="quotationForm" (ngSubmit)="onSubmit()">
                             <fieldset [disabled]="showHighRiskModal || showExportModal">
 
-                                <!-- 1. Importer Information Section -->
-                                <h3 class="mb-3 sm:mb-4 text-lg sm:text-xl font-semibold text-gray-800">Importer Information</h3>
-                                <p class="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500">This is the person or entity purchasing the insurance policy.</p>
-                                <div class="mb-4 rounded-lg border border-gray-200 bg-white p-4" *ngIf="user">
-                                    <label class="inline-flex items-center space-x-2 text-sm font-medium text-gray-700">
-                                        <input
-                                            type="checkbox"
-                                            formControlName="selfAsImporter"
-                                            value="self"
-                                            (change)="onSelfAsImporterChange($event)"
-                                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span>Self as Importer</span>
-                                    </label>
-                                </div>
-                                <div class="mb-6 rounded-lg border border-gray-200 bg-white p-4">
-                                <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2" *ngIf="displayImporterForm">
-                                    <div><label class="mb-2 block text-base font-medium text-gray-700">First Name <span class="text-red-500">*</span></label><input type="text" formControlName="firstName" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onFirstNameInput($event)" [ngClass]="(quotationForm.get('firstName')?.invalid && quotationForm.get('firstName')?.touched) || !quotationForm.get('firstName')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
-                                    <div><label class="mb-2 block text-base font-medium text-gray-700">Last Name <span class="text-red-500">*</span></label><input type="text" formControlName="lastName" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onLastNameInput($event)" [ngClass]="(quotationForm.get('lastName')?.invalid && quotationForm.get('lastName')?.touched) || !quotationForm.get('lastName')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
-                                    <div><label class="mb-2 block text-base font-medium text-gray-700">Email Address <span class="text-red-500">*</span></label><input type="email" formControlName="email" class="w-full rounded-md border bg-white px-3 py-2 text-base" (keydown)="preventSpaceInEmail($event)" (input)="onEmailInput($event)" autocapitalize="off" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email" [ngClass]="(quotationForm.get('email')?.invalid && quotationForm.get('email')?.touched) || !quotationForm.get('email')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
-                                    <div><label class="mb-2 block text-base font-medium text-gray-700">Phone Number <span class="text-red-500">*</span></label><input type="tel" formControlName="phoneNumber" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onPhoneNumberInput($event)" [ngClass]="(quotationForm.get('phoneNumber')?.invalid && quotationForm.get('phoneNumber')?.touched) || !quotationForm.get('phoneNumber')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
+                                <!-- 1. Importer Information Section - Hidden when user is logged in -->
+                                <div *ngIf="!user">
+                                    <h3 class="mb-3 sm:mb-4 text-lg sm:text-xl font-semibold text-gray-800">Importer Information</h3>
+                                    <p class="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-500">This is the person or entity purchasing the insurance policy.</p>
+                                    <div class="mb-6 rounded-lg border border-gray-200 bg-white p-4">
+                                    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+                                        <div><label class="mb-2 block text-base font-medium text-gray-700">First Name <span class="text-red-500">*</span></label><input type="text" formControlName="firstName" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onFirstNameInput($event)" [ngClass]="(quotationForm.get('firstName')?.invalid && quotationForm.get('firstName')?.touched) || !quotationForm.get('firstName')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
+                                        <div><label class="mb-2 block text-base font-medium text-gray-700">Last Name <span class="text-red-500">*</span></label><input type="text" formControlName="lastName" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onLastNameInput($event)" [ngClass]="(quotationForm.get('lastName')?.invalid && quotationForm.get('lastName')?.touched) || !quotationForm.get('lastName')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
+                                        <div><label class="mb-2 block text-base font-medium text-gray-700">Email Address <span class="text-red-500">*</span></label><input type="email" formControlName="email" class="w-full rounded-md border bg-white px-3 py-2 text-base" (keydown)="preventSpaceInEmail($event)" (input)="onEmailInput($event)" autocapitalize="off" autocomplete="email" autocorrect="off" spellcheck="false" inputmode="email" [ngClass]="(quotationForm.get('email')?.invalid && quotationForm.get('email')?.touched) || !quotationForm.get('email')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
+                                        <div><label class="mb-2 block text-base font-medium text-gray-700">Phone Number <span class="text-red-500">*</span></label><input type="tel" formControlName="phoneNumber" class="w-full rounded-md border bg-white px-3 py-2 text-base" (input)="onPhoneNumberInput($event)" [ngClass]="(quotationForm.get('phoneNumber')?.invalid && quotationForm.get('phoneNumber')?.touched) || !quotationForm.get('phoneNumber')?.value ? 'border-red-500 focus:ring-2 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-blue-500'"/></div>
 
-                                </div>
+                                    </div>
+                                    </div>
                                 </div>
 
                                 <!-- 2. Shipment Details Section -->
@@ -232,23 +222,19 @@
                                 <span class="text-xs sm:text-base">Please confirm the details below before proceeding to payment.</span>
                             </p>
 
-                            <!-- Importer Details Section -->
-                            <div class="mb-4 sm:mb-6">
+                            <!-- Importer Details Section - Hidden when user is logged in -->
+                            <div class="mb-4 sm:mb-6" *ngIf="!user">
                                 <h4 class="mb-3 sm:mb-4 text-sm sm:text-base font-bold text-gray-900">Importer Details</h4>
                                 <div class="space-y-2 sm:space-y-3">
-                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3" *ngIf="displayImporterForm">
+                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                         <span class="text-xs sm:text-base text-gray-600">Full Name</span>
                                         <span class="text-xs sm:text-base font-medium text-gray-900 text-right">{{ quotationForm.value.firstName }} {{ quotationForm.value.lastName }}</span>
                                     </div>
-                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3" *ngIf="!displayImporterForm">
-                                        <span class="text-xs sm:text-base text-gray-600">Full Name</span>
-                                        <span class="text-xs sm:text-base font-medium text-gray-900 text-right">{{ user.name }}</span>
-                                    </div>
-                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3" *ngIf="displayImporterForm">
+                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                         <span class="text-xs sm:text-base text-gray-600">Email</span>
                                         <span class="text-xs sm:text-base font-medium text-gray-900 text-right break-all">{{ quotationForm.value.email }}</span>
                                     </div>
-                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3" *ngIf="displayImporterForm">
+                                    <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                         <span class="text-xs sm:text-base text-gray-600">Phone</span>
                                         <span class="text-xs sm:text-base font-medium text-gray-900 text-right">{{ quotationForm.value.phoneNumber }}</span>
                                     </div>
@@ -269,7 +255,7 @@
                                     </div>
                                     <div class="flex justify-between pb-2 sm:pb-3">
                                         <span class="text-xs sm:text-base text-gray-600">Sum Insured [KES]</span>
-                                        <span class="text-xs sm:text-base font-bold text-gray-900 text-right">{{ quotationForm.value.sumInsured | number:'1.2-2' }}</span>
+                                        <span class="text-xs sm:text-base font-bold text-gray-900 text-right">{{ formatAmount(quotationForm.value.sumInsured) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -279,25 +265,22 @@
                         <div class="rounded-lg border border-gray-200 bg-white p-3 sm:p-4 shadow-sm" *ngIf="quoteResult?.netprem">
                             <h3 class="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-gray-900">Premium Summary</h3>
                             <div class="space-y-2 sm:space-y-3">
-                                <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
-                                    <span class="text-xs sm:text-base text-gray-600">Sum Insured</span>
-                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ quotationForm.get('sumInsured')?.value | number: '1.2-2' }}</span>
-                                </div>
+                                <!-- Sum Insured row hidden -->
                                 <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                     <span class="text-xs sm:text-base text-gray-600">Basic Premium</span>
-                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ quoteResult.premium | number: '1.2-2' }}</span>
+                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ formatAmount(quoteResult.premium) }}</span>
                                 </div>
                                 <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                     <span class="text-xs sm:text-base text-gray-600">PHCF (0.25%)</span>
-                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ quoteResult.phcf | number: '1.2-2' }}</span>
+                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ formatAmount(quoteResult.phcf) }}</span>
                                 </div>
                                 <div class="flex justify-between border-b-2 border-gray-200 pb-2 sm:pb-3">
                                     <span class="text-xs sm:text-base text-gray-600">Training Levy (0.2%)</span>
-                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ quoteResult.tl | number: '1.2-2' }}</span>
+                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ formatAmount(quoteResult.tl) }}</span>
                                 </div>
                                 <div class="flex justify-between pb-2 sm:pb-3">
-                                    <span class="text-xs sm:text-base text-gray-600">Stamp Duty (0.05%)</span>
-                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ quoteResult.sd | number: '1.2-2' }}</span>
+                                    <span class="text-xs sm:text-base text-gray-600">Stamp Duty<span *ngIf="quotationForm.get('modeOfShipment')?.value !== '2'"> (0.05%)</span></span>
+                                    <span class="text-xs sm:text-base font-medium text-gray-900 text-right">KES {{ formatAmount(quoteResult.sd) }}</span>
                                 </div>
                             </div>
 
