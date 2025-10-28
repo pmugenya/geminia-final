@@ -1965,16 +1965,11 @@ export class MarineCargoQuotationComponent implements OnInit, OnDestroy, AfterVi
             this.isLoggedIn = !!user;
             if (this.isLoggedIn) {
                 this.user = user as EnhancedStoredUser;
-                console.log(this.user);
                 // Remove validators from importer fields when user is logged in
-                this.quotationForm.get('firstName')?.clearValidators();
-                this.quotationForm.get('lastName')?.clearValidators();
-                this.quotationForm.get('email')?.clearValidators();
-                this.quotationForm.get('phoneNumber')?.clearValidators();
-                this.quotationForm.get('firstName')?.updateValueAndValidity();
-                this.quotationForm.get('lastName')?.updateValueAndValidity();
-                this.quotationForm.get('email')?.updateValueAndValidity();
-                this.quotationForm.get('phoneNumber')?.updateValueAndValidity();
+                this.quotationForm.get('firstName')?.setValue('one', { emitEvent: false });
+                this.quotationForm.get('lastName')?.setValue('two', { emitEvent: false });
+                this.quotationForm.get('email')?.setValue('three@test.com', { emitEvent: false });
+                this.quotationForm.get('phoneNumber')?.setValue('0722123456', { emitEvent: false });
             } else {
                 this.user = null;
                 // Re-add validators when user is not logged in
@@ -2414,7 +2409,7 @@ export class MarineCargoQuotationComponent implements OnInit, OnDestroy, AfterVi
     // Format amount to hide .00 decimals for whole numbers
     formatAmount(value: number): string {
         if (!value && value !== 0) return '0';
-        
+
         // Check if the number is a whole number
         if (value % 1 === 0) {
             // Return without decimals, with thousand separators

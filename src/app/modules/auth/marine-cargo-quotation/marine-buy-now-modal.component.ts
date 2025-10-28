@@ -1513,7 +1513,7 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
 
     // Track duplicate file errors
     duplicateFileErrors: { [key: string]: string } = {};
-    
+
     // Today's date for min date validation
     today = new Date();
 
@@ -2885,7 +2885,7 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
             if (dispatchDate) {
                 const arrivalControl = this.shipmentForm.get('estimatedArrival');
                 const arrivalDate = arrivalControl?.value;
-                
+
                 // If arrival date exists and is before dispatch date, clear it
                 if (arrivalDate && new Date(arrivalDate) < new Date(dispatchDate)) {
                     arrivalControl?.setValue('');
@@ -2898,7 +2898,7 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
         this.shipmentForm.get('estimatedArrival')?.valueChanges.subscribe(arrivalDate => {
             if (arrivalDate) {
                 const dispatchDate = this.shipmentForm.get('dateOfDispatch')?.value;
-                
+
                 // Validate that arrival date is not before dispatch date
                 if (dispatchDate && new Date(arrivalDate) < new Date(dispatchDate)) {
                     this.shipmentForm.get('estimatedArrival')?.setErrors({ beforeDispatch: true });
@@ -3118,7 +3118,7 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
     // Format amount to hide .00 decimals for whole numbers
     formatAmount(value: number): string {
         if (!value && value !== 0) return '0';
-        
+
         // Check if the number is a whole number
         if (value % 1 === 0) {
             // Return without decimals, with thousand separators

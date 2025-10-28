@@ -57,6 +57,7 @@ export interface QuotesData {
     description: string;
     status: string;
     quoteId: number;
+    prospectId: number;
     pinNumber: string;
     idNumber: string;
     phoneNo: string;
