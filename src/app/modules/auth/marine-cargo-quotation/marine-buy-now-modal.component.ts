@@ -1695,6 +1695,22 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
             next: (res) => {
                 console.log(res);
                 this.quoteData = res;
+                if(res.idDocumentExists){
+                    this.shipmentForm.get('nationalId')?.clearValidators();
+                    this.shipmentForm.get('nationalId')?.updateValueAndValidity();
+                }
+                else{
+                    this.shipmentForm.get('nationalId')?.setValidators(Validators.required);
+                    this.shipmentForm.get('nationalId')?.updateValueAndValidity();
+                }
+                if(res.kraDocumentExists){
+                    this.shipmentForm.get('kraPinCertificate')?.clearValidators();
+                    this.shipmentForm.get('kraPinCertificate')?.updateValueAndValidity();
+                }
+                else{
+                    this.shipmentForm.get('kraPinCertificate')?.setValidators(Validators.required);
+                    this.shipmentForm.get('kraPinCertificate')?.updateValueAndValidity();
+                }
                 this.shipmentForm.get('idNumber')?.setValue(res.idNumber);
                 this.shipmentForm.get('streetAddress')?.setValue(res.postalAddress);
                 this.shipmentForm.get('postalCode')?.setValue(res.postalCode);
@@ -1927,26 +1943,26 @@ export class MarineBuyNowModalComponent implements OnInit, AfterViewInit {
     }
 
     onSubmit(): void {
-        // if (this.shipmentForm.invalid) {
-        //     // Mark all fields as touched to show validation errors
-        //     this.shipmentForm.markAllAsTouched();
-        //
-        //     const invalidFields = Object.keys(this.shipmentForm.controls)
-        //         .filter(key => this.shipmentForm.get(key)?.invalid)
-        //         .map(key => ({
-        //             field: key,
-        //             errors: this.shipmentForm.get(key)?.errors
-        //         }));
-        //
-        //     console.warn('❌ Invalid form fields:', invalidFields);
-        //
-        //
-        //     this.snackBar.open('Please fill in all required fields correctly', 'Close', {
-        //         duration: 5000,
-        //         panelClass: ['error-snackbar']
-        //     });
-        //     return;
-        // }
+        if (this.shipmentForm.invalid) {
+            // Mark all fields as touched to show validation errors
+            this.shipmentForm.markAllAsTouched();
+
+            const invalidFields = Object.keys(this.shipmentForm.controls)
+                .filter(key => this.shipmentForm.get(key)?.invalid)
+                .map(key => ({
+                    field: key,
+                    errors: this.shipmentForm.get(key)?.errors
+                }));
+
+            console.warn('❌ Invalid form fields:', invalidFields);
+
+
+            this.snackBar.open('Please fill in all required fields correctly', 'Close', {
+                duration: 5000,
+                panelClass: ['error-snackbar']
+            });
+            return;
+        }
 
         this.isSubmitting = true;
         const kycFormValue = this.shipmentForm.getRawValue(); // Use getRawValue to include disabled fields

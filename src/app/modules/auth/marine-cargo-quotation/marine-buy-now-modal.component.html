@@ -541,9 +541,9 @@
                    (input)="onMpesaNumberInput($event)">
           </div>
             <div class="mb-4 mt-2" *ngIf="!isMakePaymentNow">
-              <button mat-raised-button color="primary" class="w-full mt-2 mb-2 pay-now-button" (click)="onSubmit()" [disabled]="isSubmitting || !isFormValid">
+              <button mat-raised-button color="primary" class="w-full mt-2 mb-2 pay-now-button" (click)="onSubmit()" [disabled]="isSubmitting">
                 <mat-spinner *ngIf="isSubmitting" diameter="24" class="mr-2"></mat-spinner>
-                {{ isSubmitting ? 'Processing...' : (!isFormValid ? 'Complete All Fields' : 'Submit Application') }}
+                {{ isSubmitting ? 'Processing...' : 'Submit Application' }}
               </button>
             </div>
             <div class="mb-4 mt-2" *ngIf="isMakePaymentNow">
